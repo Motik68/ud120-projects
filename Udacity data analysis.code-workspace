@@ -1,6 +1,21 @@
 {
 	"folders": [
 		{
+			"path": "naive_bayes"
+		},
+		{
+			"path": "svm"
+		},
+		{
+			"path": "decision_tree"
+		},
+		{
+			"path": "datasets_questions"
+		},
+		{
+			"path": "outliers"
+		},
+		{
 			"path": "pca"
 		},
 		{
