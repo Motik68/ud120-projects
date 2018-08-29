@@ -2,7 +2,7 @@
 
 import sys
 import pickle
-import matplotlib.pyplot
+import matplotlib.pyplot as plt
 sys.path.append("../tools/")
 
 from feature_format import featureFormat, targetFeatureSplit
@@ -11,7 +11,7 @@ from tester import dump_classifier_and_data
 ### Task 1: Select what features you'll use.
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
-features_list = ['poi','salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 
+features_list = ['poi', 'salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 
 'total_stock_value', 'expenses', 'exercised_stock_options', 'other', 'long_term_incentive', 'restricted_stock', 'director_fees', 
 'to_messages', 'from_poi_to_this_person', 'from_messages', 'from_this_person_to_poi', 'shared_receipt_with_poi'] # You will need to use more features
 
@@ -32,18 +32,22 @@ my_dataset = data_dict
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
-for i in range (len(features_list)):
+n_features = len(features_list)
+for i in range (1, n_features):
     feature = features_list[i]
-    if not feature == 'poi':
-        for point in data:
-            # poi = point[0]
-            # salary = point[1]
-            # bonus = point[2]
-            matplotlib.pyplot.scatter(point[0], point[i])
+    # if not feature == 'poi':
+    plt.subplot(1, n_features - 1, i)
+    
+    for point in data:
+        # poi = point[0]
+        # salary = point[1]
+        # bonus = point[2]
+        plt.scatter(point[0], point[i])
 
-        matplotlib.pyplot.xlabel("poi")
-        matplotlib.pyplot.ylabel(feature)
-        matplotlib.pyplot.show()
+    # plt.xlabel("poi")
+    plt.xlabel(feature)
+
+plt.show()
 
 ### Task 4: Try a varity of classifiers
 ### Please name your classifier clf for easy export below.
