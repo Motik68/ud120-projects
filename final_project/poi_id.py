@@ -22,7 +22,8 @@ with open("final_project_dataset.pkl", "r") as data_file:
 ### Task 2: Remove outliers
 data_dict.pop('TOTAL', 0)
 
-print max(data_dict.items(), key=lambda record: float(record[1]['bonus']))
+print max(data_dict.items(), key=lambda record: float(record[1]['salary']))
+print [data_dict.items[i][0]] for i 
 
 ### Task 3: Create new feature(s)
 ### Store to my_dataset for easy export below.
@@ -32,22 +33,22 @@ my_dataset = data_dict
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
-n_features = len(features_list)
-for i in range (1, n_features):
-    feature = features_list[i]
-    # if not feature == 'poi':
-    plt.subplot(1, n_features - 1, i)
+# n_features = len(features_list)
+# for i in range (1, n_features):
+#     feature = features_list[i]
+#     # if not feature == 'poi':
+#     plt.subplot(1, n_features - 1, i)
     
-    for point in data:
-        # poi = point[0]
-        # salary = point[1]
-        # bonus = point[2]
-        plt.scatter(point[0], point[i])
+#     for point in data:
+#         # poi = point[0]
+#         # salary = point[1]
+#         # bonus = point[2]
+#         plt.scatter(point[0], point[i])
 
-    # plt.xlabel("poi")
-    plt.xlabel(feature)
+#     # plt.xlabel("poi")
+#     plt.xlabel(feature)
 
-plt.show()
+# plt.show()
 
 ### Task 4: Try a varity of classifiers
 ### Please name your classifier clf for easy export below.
