@@ -16,6 +16,9 @@
 			"path": "outliers"
 		},
 		{
+			"path": "feature_selection"
+		},
+		{
 			"path": "pca"
 		},
 		{

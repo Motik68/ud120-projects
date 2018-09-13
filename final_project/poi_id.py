@@ -19,11 +19,21 @@ features_list = ['poi', 'salary', 'deferral_payments', 'total_payments', 'loan_a
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
 
+features = set()
+for name in data_dict.keys():
+    for key in data_dict[name].keys():
+        features.add(key) 
+
+print len(features)
+print features
+
+print len(list(name for name in data_dict.keys() if data_dict[name]["poi"] == 1))
+
 ### Task 2: Remove outliers
 data_dict.pop('TOTAL', 0)
 
 print max(data_dict.items(), key=lambda record: float(record[1]['salary']))
-print [data_dict.items[i][0]] for i 
+# print [data_dict.items[i][0]] for i 
 
 ### Task 3: Create new feature(s)
 ### Store to my_dataset for easy export below.
