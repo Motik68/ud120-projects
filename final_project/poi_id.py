@@ -3,6 +3,7 @@
 import sys
 import pickle
 import matplotlib.pyplot as plt
+import numpy as np
 sys.path.append("../tools/")
 
 from feature_format import featureFormat, targetFeatureSplit
@@ -11,64 +12,43 @@ from tester import dump_classifier_and_data
 ### Task 1: Select what features you'll use.
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
-features_list = ['poi', 'salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 
-'total_stock_value', 'expenses', 'exercised_stock_options', 'other', 'long_term_incentive', 'restricted_stock', 'director_fees', 
-'to_messages', 'from_poi_to_this_person', 'from_messages', 'from_this_person_to_poi', 'shared_receipt_with_poi'] # You will need to use more features
+features_list = ['poi', 'salary', 'bonus', 'total_stock_value', 'total_payments']
 
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
 
-features = set()
-for name in data_dict.keys():
-    for key in data_dict[name].keys():
-        features.add(key) 
-
-print len(features)
-print features
-
-print len(list(name for name in data_dict.keys() if data_dict[name]["poi"] == 1))
-
 ### Task 2: Remove outliers
-data_dict.pop('TOTAL', 0)
+data_dict.pop('TOTAL')
+data_dict.pop('BELFER ROBERT')
+data_dict.pop('BHATNAGAR SANJAY')
 
-print max(data_dict.items(), key=lambda record: float(record[1]['salary']))
-# print [data_dict.items[i][0]] for i 
+for name in data_dict:
+    for feature in data_dict[name]:
+        if data_dict[name][feature] == 'NaN':
+            data_dict[name][feature] = 0
 
 ### Task 3: Create new feature(s)
 ### Store to my_dataset for easy export below.
 my_dataset = data_dict
 
+for name in my_dataset:
+    if my_dataset[name]['total_payments'] > 0 and my_dataset[name]['total_stock_value'] > 0:
+        my_dataset[name]['stock_plus_payments'] = my_dataset[name]['total_payments'] + my_dataset[name]['total_stock_value']
+    else:
+        my_dataset[name]['stock_plus_payments'] = 0
+
+features_list.append('stock_plus_payments')
+
 ### Extract features and labels from dataset for local testing
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
-# n_features = len(features_list)
-# for i in range (1, n_features):
-#     feature = features_list[i]
-#     # if not feature == 'poi':
-#     plt.subplot(1, n_features - 1, i)
-    
-#     for point in data:
-#         # poi = point[0]
-#         # salary = point[1]
-#         # bonus = point[2]
-#         plt.scatter(point[0], point[i])
-
-#     # plt.xlabel("poi")
-#     plt.xlabel(feature)
-
-# plt.show()
-
-### Task 4: Try a varity of classifiers
-### Please name your classifier clf for easy export below.
-### Note that if you want to do PCA or other multi-stage operations,
-### you'll need to use Pipelines. For more info:
-### http://scikit-learn.org/stable/modules/pipeline.html
-
 # Provided to give you a starting point. Try a variety of classifiers.
-from sklearn.naive_bayes import GaussianNB
-clf = GaussianNB()
+# from sklearn.naive_bayes import GaussianNB
+# clf = GaussianNB()
+
+from sklearn import svm, model_selection, metrics
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
 ### using our testing script. Check the tester.py script in the final project
@@ -78,9 +58,21 @@ clf = GaussianNB()
 ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
 
 # Example starting point. Try investigating other evaluation techniques!
-from sklearn.cross_validation import train_test_split
-features_train, features_test, labels_train, labels_test = \
-    train_test_split(features, labels, test_size=0.3, random_state=42)
+# from sklearn.cross_validation import train_test_split
+# features_train, features_test, labels_train, labels_test = \
+#     train_test_split(features, labels, test_size=0.3, random_state=42)
+
+features_train, features_test, labels_train, labels_test = model_selection.train_test_split(features, labels, test_size=.3, random_state=42)
+
+parameters = {'multi_class':('ovr', 'crammer_singer'), 'C':(1, 10, 100), 'dual':(True, False)}
+svr = svm.LinearSVC()
+clf = model_selection.GridSearchCV(svr, parameters, cv=5, scoring='recall')
+clf.fit(features_train, labels_train)
+
+print clf.best_params_
+print clf.best_score_
+print clf.score (features_test, labels_test)
+print metrics.classification_report(labels_test, clf.predict(features_test))
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
