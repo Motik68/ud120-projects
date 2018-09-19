@@ -45,10 +45,10 @@ data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
 # Provided to give you a starting point. Try a variety of classifiers.
-# from sklearn.naive_bayes import GaussianNB
+from sklearn import tree, model_selection
 # clf = GaussianNB()
 
-from sklearn import svm, model_selection, metrics
+# from sklearn import svm, model_selection, metrics
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
 ### using our testing script. Check the tester.py script in the final project
@@ -62,21 +62,16 @@ from sklearn import svm, model_selection, metrics
 # features_train, features_test, labels_train, labels_test = \
 #     train_test_split(features, labels, test_size=0.3, random_state=42)
 
-features_train, features_test, labels_train, labels_test = model_selection.train_test_split(features, labels, test_size=.3, random_state=42)
-
-parameters = {'multi_class':('ovr', 'crammer_singer'), 'C':(1, 10, 100), 'dual':(True, False)}
-svr = svm.LinearSVC()
-clf = model_selection.GridSearchCV(svr, parameters, cv=5, scoring='recall')
-clf.fit(features_train, labels_train)
-
-print clf.best_params_
-print clf.best_score_
-print clf.score (features_test, labels_test)
-print metrics.classification_report(labels_test, clf.predict(features_test))
+np.random.seed(42)
+parameters = {'criterion':('gini', 'entropy')}
+svr = tree.DecisionTreeClassifier()
+clf = model_selection.GridSearchCV(svr, parameters, cv=10, scoring=['precision', 'recall', 'f1'], 
+                                   refit='precision', n_jobs=1, verbose=1)
+clf.fit(features, labels)
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
 ### that the version of poi_id.py that you submit can be run on its own and
 ### generates the necessary .pkl files for validating your results.
 
-dump_classifier_and_data(clf, my_dataset, features_list)
+dump_classifier_and_data(clf.best_estimator_, my_dataset, features_list)
