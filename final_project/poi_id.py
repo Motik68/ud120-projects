@@ -1,4 +1,4 @@
-###!/usr/bin/python
+#!/usr/bin/python
 
 import sys
 import pickle
@@ -48,8 +48,6 @@ labels, features = targetFeatureSplit(data)
 from sklearn import tree, model_selection
 # clf = GaussianNB()
 
-# from sklearn import svm, model_selection, metrics
-
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
 ### using our testing script. Check the tester.py script in the final project
 ### folder for details on the evaluation method, especially the test_classifier
@@ -63,7 +61,7 @@ from sklearn import tree, model_selection
 #     train_test_split(features, labels, test_size=0.3, random_state=42)
 
 np.random.seed(42)
-parameters = {'criterion':('gini', 'entropy')}
+parameters = {'criterion':('gini', 'entropy'), 'max_depth':(10, 50, 100, None), 'class_weight':('balanced', None)}
 svr = tree.DecisionTreeClassifier()
 clf = model_selection.GridSearchCV(svr, parameters, cv=10, scoring=['precision', 'recall', 'f1'], 
                                    refit='precision', n_jobs=1, verbose=1)
